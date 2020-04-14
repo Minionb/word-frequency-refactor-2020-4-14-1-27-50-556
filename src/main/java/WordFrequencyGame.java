@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class WordFrequencyGame {
     private static final String SPACE_PATTERN = "\\s+";
@@ -10,10 +6,11 @@ public class WordFrequencyGame {
     public static final String CALCULATE_ERROR = "Calculate Error";
     public static final String SPACE_DELIMITER = " ";
 
-    public String getResult(String inputStr) {
+    public String getResult(String sentence) {
 
         try {
-            return calculateWordFrequency(inputStr);
+           List<WordInfo> wordInfoList = calculateWordFrequency(sentence);
+           return formatWordFrequencyResult(wordInfoList);
 
         } catch (Exception e) {
             return CALCULATE_ERROR;
@@ -21,30 +18,17 @@ public class WordFrequencyGame {
 
     }
 
-    private String calculateWordFrequency(String inputStr) {
-        //split the input string with 1 to n pieces of spaces
-        String[] words = inputStr.split(SPACE_PATTERN);
-
+    private List<WordInfo> calculateWordFrequency(String sentence) {
+        List<String> words = Arrays.asList(sentence.split(SPACE_PATTERN));
         List<WordInfo> wordInfoList = new ArrayList<>();
-        for (String s : words) {
-            WordInfo wordInfo = new WordInfo(s, 1);
-            wordInfoList.add(wordInfo);
+        for(String word : new HashSet<>(words)) {
+            int count = Collections.frequency(words, word);
+            wordInfoList.add(new WordInfo(word, count));
+
         }
-
-        //get the map for the next step of sizing the same word
-        Map<String, List<WordInfo>> map = getMap(wordInfoList);
-
-        List<WordInfo> list = new ArrayList<>();
-        for (Map.Entry<String, List<WordInfo>> entry : map.entrySet()) {
-            WordInfo wordInfo = new WordInfo(entry.getKey(), entry.getValue().size());
-            list.add(wordInfo);
-        }
-        wordInfoList = list;
-
         wordInfoList.sort((firstWordInfo, secondWordInfo) -> secondWordInfo.getWordCount() - firstWordInfo.getWordCount());
+        return wordInfoList;
 
-        //return formatWordFrequencyResult(wordInfoList);
-        return formatWordFrequencyResult(wordInfoList);
     }
 
     private String formatWordFrequencyResult(List<WordInfo> wordInfoList) {
@@ -56,17 +40,5 @@ public class WordFrequencyGame {
         return joiner.toString();
     }
 
-    private Map<String, List<WordInfo>> getMap(List<WordInfo> wordInfoList) {
-        Map<String, List<WordInfo>> map = new HashMap<>();
-        for (WordInfo wordInfo : wordInfoList) {
-            if (!map.containsKey(wordInfo.getWord())) {
-                ArrayList<WordInfo> arr = new ArrayList<>();
-                arr.add(wordInfo);
-                map.put(wordInfo.getWord(), arr);
-            } else {
-                map.get(wordInfo.getWord()).add(wordInfo);
-            }
-        }
-        return map;
-    }
+
 }
