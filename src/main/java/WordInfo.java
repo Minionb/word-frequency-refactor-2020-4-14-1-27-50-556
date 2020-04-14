@@ -2,8 +2,8 @@ public class WordInfo {
     private String word;
     private int wordCount;
 
-    public WordInfo(String value, int wordCount) {
-        this.word = value;
+    public WordInfo(String word, int wordCount) {
+        this.word = word;
         this.wordCount = wordCount;
     }
 
